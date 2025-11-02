@@ -3,7 +3,6 @@ import cors from 'cors';
 import 'dotenv/config';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-
 import { errors } from 'celebrate';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { logger } from './middleware/logger.js';
