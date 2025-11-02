@@ -1,31 +1,28 @@
-import {Joi, Segments} from 'celebrate';
+import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
 import { TAGS } from '../constants/tags.js';
 
 const objectIdValidator = (value, helpers) => {
   return !isValidObjectId(value)
-  ? helpers.message('Invalid id format')
-  : value;
+    ? helpers.message('Invalid id format')
+    : value;
 };
 
-//для GET /notes
 export const getAllNotesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20).default(10),
     tag: Joi.string().valid(...TAGS),
-    search: Joi.string().max(100).allow(''),
-  })
+    search: Joi.string().max(100).optional().allow(''),
+  }),
 };
 
-//для get /notes/:noteId, delete /notes/:noteId
 export const noteIdSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(),
-  })
+  }),
 };
 
-//для post /notes
 export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).max(100).required().messages({
@@ -37,14 +34,12 @@ export const createNoteSchema = {
       "string.base": "Content must be a string",
       "string.max": "Content should have at most {#limit} characters",
     }),
-    tag: Joi.string().valid(...TAGS).required().messages({
+    tag: Joi.string().valid(...TAGS).optional().messages({
       "any.only": `Tag must be one of the following: ${TAGS.join(', ')}`,
-      "any.required": "Tag is required",
     }),
   }),
 };
 
-//для PATCH /notes/:noteId
 export const updateNoteSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(),
